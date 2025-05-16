@@ -5,7 +5,7 @@ const YAML = require("yamljs");
 const app = express();
 const sekolahRoutes = require("../routes/Routes");
 
-const swaggerDocument = YAML.load("/swagger.yaml");
+const swaggerDocument = YAML.load("../swagger.yaml");
 // const swaggerDocument = {
 //   openapi: "3.0.0",
 //   info: {
