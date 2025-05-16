@@ -1,0 +1,257 @@
+openapi: 3.0.0
+info:
+  title: API Sekolah
+  version: 1.0.0
+  description: API untuk mengelola data sekolah
+servers:
+  - url: https://intero-rest-api.vercel.app/api/sekolah/
+    description: Server utama
+paths:
+  /api/sekolah:
+    get:
+      summary: Ambil semua data sekolah
+      responses:
+        "200":
+          description: Daftar sekolah berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sekolah"
+    post:
+      summary: Tambah sekolah baru
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SekolahInput"
+      responses:
+        "201":
+          description: Sekolah berhasil dibuat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sekolah"
+  /api/sekolah/{npsn}:
+    get:
+      summary: Ambil data sekolah berdasarkan NPSN
+      parameters:
+        - name: npsn
+          in: path
+          description: NPSN sekolah
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Data sekolah ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sekolah"
+        "404":
+          description: Sekolah tidak ditemukan
+    put:
+      summary: Update data sekolah berdasarkan NPSN
+      parameters:
+        - name: npsn
+          in: path
+          description: NPSN sekolah
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SekolahInput"
+      responses:
+        "200":
+          description: Data sekolah berhasil diupdate
+    delete:
+      summary: Hapus data sekolah berdasarkan NPSN
+      parameters:
+        - name: npsn
+          in: path
+          description: NPSN sekolah
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Data sekolah berhasil dihapus
+
+components:
+  schemas:
+    Sekolah:
+      type: object
+      properties:
+        npsn:
+          type: string
+          example: "12345678"
+        nama:
+          type: string
+          example: "Sekolah ABC"
+        bentukPendidikan:
+          type: string
+          example: "SMA"
+        jalurPendidikan:
+          type: string
+          example: "Negeri"
+        jenjangPendidikan:
+          type: string
+          example: "Menengah Atas"
+        kementerianPembina:
+          type: string
+          example: "Kementerian Pendidikan"
+        statusSatuanPendidikan:
+          type: string
+          example: "Aktif"
+        akreditasi:
+          type: string
+          example: "A"
+        jenisPendidikan:
+          type: string
+          example: "Formal"
+        alamat:
+          type: object
+          properties:
+            jalan:
+              type: string
+              example: "Jl. Merdeka No. 1"
+            rt:
+              type: integer
+              example: 1
+            rw:
+              type: integer
+              example: 2
+            namaDusun:
+              type: string
+              example: "Dusun Melati"
+            namaDesa:
+              type: string
+              example: "Desa Mekar"
+            namaKecamatan:
+              type: string
+              example: "Kecamatan Indah"
+            namaKabupaten:
+              type: string
+              example: "Kabupaten Maju"
+            namaProvinsi:
+              type: string
+              example: "Provinsi Sejahtera"
+            namaNegara:
+              type: string
+              example: "Indonesia"
+            kodeProvinsi:
+              type: string
+              example: "31"
+            kodeKabupaten:
+              type: string
+              example: "3171"
+            kodeKecamatan:
+              type: string
+              example: "317101"
+            kodeWilayah:
+              type: string
+              example: "3171010001"
+        kontak:
+          type: object
+          properties:
+            nomorFax:
+              type: string
+              example: "021-123456"
+            nomorTelepon:
+              type: string
+              example: "021-654321"
+            email:
+              type: string
+              example: "info@sekolahabc.sch.id"
+            website:
+              type: string
+              example: "https://sekolahabc.sch.id"
+        lokasi:
+          type: object
+          properties:
+            lintang:
+              type: number
+              format: float
+              example: -6.914744
+            bujur:
+              type: number
+              format: float
+              example: 107.609810
+
+    SekolahInput:
+      type: object
+      properties:
+        npsn:
+          type: string
+        nama:
+          type: string
+        bentukPendidikan:
+          type: string
+        jalurPendidikan:
+          type: string
+        jenjangPendidikan:
+          type: string
+        kementerianPembina:
+          type: string
+        statusSatuanPendidikan:
+          type: string
+        akreditasi:
+          type: string
+        jenisPendidikan:
+          type: string
+        alamat:
+          type: object
+          properties:
+            jalan:
+              type: string
+            rt:
+              type: integer
+            rw:
+              type: integer
+            namaDusun:
+              type: string
+            namaDesa:
+              type: string
+            namaKecamatan:
+              type: string
+            namaKabupaten:
+              type: string
+            namaProvinsi:
+              type: string
+            namaNegara:
+              type: string
+            kodeProvinsi:
+              type: string
+            kodeKabupaten:
+              type: string
+            kodeKecamatan:
+              type: string
+            kodeWilayah:
+              type: string
+        kontak:
+          type: object
+          properties:
+            nomorFax:
+              type: string
+            nomorTelepon:
+              type: string
+            email:
+              type: string
+            website:
+              type: string
+        lokasi:
+          type: object
+          properties:
+            lintang:
+              type: number
+              format: float
+            bujur:
+              type: number
+              format: float
