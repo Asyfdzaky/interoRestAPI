@@ -9,15 +9,26 @@ const handleError = (res, error) => {
 // GET ALL SCHOOLS
 exports.getAll = async (req, res) => {
   try {
-    const { data: schools, error } = await supabase.from("sekolah").select(`
+    const {
+      data: schools,
+      error,
+      count,
+    } = await supabase.from("sekolah").select(
+      `
         *,
         alamat(*),
         kontak(*),
         lokasi(*)
-      `);
+      `,
+      { count: "exact" } // 👉 ini penting untuk mengaktifkan count
+    );
 
     if (error) throw error;
-    res.json(schools);
+
+    res.json({
+      total: count,
+      data: schools,
+    });
   } catch (error) {
     handleError(res, error);
   }

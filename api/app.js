@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const sekolahRoutes = require("./routes/Routes");
+const sekolahRoutes = require("../routes/Routes");
 
 app.use(express.json());
 app.use("/api/sekolah", sekolahRoutes);
