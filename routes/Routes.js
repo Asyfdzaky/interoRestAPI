@@ -8,4 +8,5 @@ router.post("/", controller.create);
 router.put("/:npsn", controller.update);
 router.delete("/:npsn", controller.delete);
 router.get("/filter", controller.filterByJenjang);
+
 module.exports = router;

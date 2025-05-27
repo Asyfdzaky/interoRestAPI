@@ -213,7 +213,6 @@ exports.delete = async (req, res) => {
     handleError(res, error);
   }
   //buat fitur untuk filter data sekolah berdasarkan tingkat pendidikan
-  // FILTER BY JENJANG PENDIDIKAN
   exports.filterByJenjang = async (req, res) => {
     const { jenjang } = req.query;
 
