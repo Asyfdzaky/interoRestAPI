@@ -237,7 +237,7 @@ exports.filterByJenjang = async (req, res) => {
     `,
         { count: "exact" }
       )
-      .eq("jenjang_pendidikan", jenjang); // filter jenjang
+      .eq("bentuk_pendidikan", jenjang); // filter jenjang
 
     if (error) throw error;
 
