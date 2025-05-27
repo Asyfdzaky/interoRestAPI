@@ -213,39 +213,39 @@ exports.delete = async (req, res) => {
     handleError(res, error);
   }
   //buat fitur untuk filter data sekolah berdasarkan tingkat pendidikan
-  exports.filterByJenjang = async (req, res) => {
-    const { jenjang } = req.query;
+};
+exports.filterByJenjang = async (req, res) => {
+  const { jenjang } = req.query;
 
-    if (!jenjang) {
-      return res.status(400).json({ error: "Parameter 'jenjang' wajib diisi" });
-    }
+  if (!jenjang) {
+    return res.status(400).json({ error: "Parameter 'jenjang' wajib diisi" });
+  }
 
-    try {
-      const {
-        data: filteredSchools,
-        error,
-        count,
-      } = await supabase
-        .from("sekolah")
-        .select(
-          `
-        *,
-        alamat(*),
-        kontak(*),
-        lokasi(*)
-      `,
-          { count: "exact" }
-        )
-        .eq("jenjang_pendidikan", jenjang); // filter jenjang
+  try {
+    const {
+      data: filteredSchools,
+      error,
+      count,
+    } = await supabase
+      .from("sekolah")
+      .select(
+        `
+      *,
+      alamat(*),
+      kontak(*),
+      lokasi(*)
+    `,
+        { count: "exact" }
+      )
+      .eq("jenjang_pendidikan", jenjang); // filter jenjang
 
-      if (error) throw error;
+    if (error) throw error;
 
-      res.json({
-        total: count,
-        data: filteredSchools,
-      });
-    } catch (error) {
-      handleError(res, error);
-    }
-  };
+    res.json({
+      total: count,
+      data: filteredSchools,
+    });
+  } catch (error) {
+    handleError(res, error);
+  }
 };
