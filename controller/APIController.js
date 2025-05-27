@@ -214,11 +214,13 @@ exports.delete = async (req, res) => {
   }
   //buat fitur untuk filter data sekolah berdasarkan tingkat pendidikan
 };
-exports.filterByJenjang = async (req, res) => {
-  const { jenjang } = req.query;
+exports.filterByBentukPendidikan = async (req, res) => {
+  const { bentukPendidikan } = req.query;
 
-  if (!jenjang) {
-    return res.status(400).json({ error: "Parameter 'jenjang' wajib diisi" });
+  if (!bentukPendidikan) {
+    return res
+      .status(400)
+      .json({ error: "Parameter 'bentukPendidikan' wajib diisi" });
   }
 
   try {
@@ -230,14 +232,14 @@ exports.filterByJenjang = async (req, res) => {
       .from("sekolah")
       .select(
         `
-      *,
-      alamat(*),
-      kontak(*),
-      lokasi(*)
-    `,
+        *,
+        alamat(*),
+        kontak(*),
+        lokasi(*)
+      `,
         { count: "exact" }
       )
-      .eq("bentuk_pendidikan", jenjang); // filter jenjang
+      .eq("bentuk_pendidikan", bentukPendidikan); // filter bentukPendidikan
 
     if (error) throw error;
 
