@@ -125,7 +125,7 @@ exports.update = async (req, res) => {
 
   try {
     // Update main school data
-    const { data: schoolData, error: schoolError } = await supabase
+    const { data: updatedSchool, error: schoolError } = await supabase
       .from("sekolah")
       .update({
         nama,
@@ -137,40 +137,44 @@ exports.update = async (req, res) => {
         akreditasi,
         jenis_pendidikan: jenisPendidikan,
       })
-      .eq("npsn", npsn);
+      .eq("npsn", npsn)
+      .select()
+      .single();
 
     if (schoolError) throw schoolError;
+    if (!updatedSchool) {
+      return res.status(404).json({ error: "Sekolah tidak ditemukan" });
+    }
 
-    // Update related tables
-    const updatePromises = [];
+    // Update related tables in parallel if available
+    const updateTasks = [];
 
     if (alamat) {
-      updatePromises.push(
-        supabase.from("alamat").update(alamat).eq("npsn", npsn)
-      );
+      updateTasks.push(supabase.from("alamat").update(alamat).eq("npsn", npsn));
     }
 
     if (kontak) {
-      updatePromises.push(
-        supabase.from("kontak").update(kontak).eq("npsn", npsn)
-      );
+      updateTasks.push(supabase.from("kontak").update(kontak).eq("npsn", npsn));
     }
 
     if (lokasi) {
-      updatePromises.push(
-        supabase.from("lokasi").update(lokasi).eq("npsn", npsn)
-      );
+      updateTasks.push(supabase.from("lokasi").update(lokasi).eq("npsn", npsn));
     }
 
-    const results = await Promise.all(updatePromises);
-    const errors = results.filter((r) => r.error);
+    const results = await Promise.all(updateTasks);
+    const updateErrors = results.find((r) => r.error);
 
-    if (errors.length > 0) throw errors[0].error;
+    if (updateErrors) throw updateErrors.error;
 
+    // Final response
     res.json({
-      message: "Data berhasil diupdate",
-      npsn,
-      ...schoolData,
+      message: "Data sekolah berhasil diperbarui",
+      data: {
+        ...updatedSchool,
+        alamat: alamat || null,
+        kontak: kontak || null,
+        lokasi: lokasi || null,
+      },
     });
   } catch (error) {
     handleError(res, error);
