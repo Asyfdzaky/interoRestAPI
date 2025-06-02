@@ -8,5 +8,6 @@ router.get("/:npsn", controller.getOne);
 router.post("/", controller.create);
 router.put("/:npsn", controller.update);
 router.delete("/:npsn", controller.delete);
+router.get("/search", controller.searchByNamaOrNPSN);
 
 module.exports = router;

@@ -255,3 +255,35 @@ exports.filterByBentukPendidikan = async (req, res) => {
     handleError(res, error);
   }
 };
+//Search
+exports.searchByNamaOrNPSN = async (req, res) => {
+  const { q } = req.query;
+
+  if (!q) {
+    return res.status(400).json({ error: "Parameter 'search' wajib diisi" });
+  }
+
+  try {
+    const { data, error, count } = await supabase
+      .from("sekolah")
+      .select(
+        `
+        *,
+        alamat(*),
+        kontak(*),
+        lokasi(*)
+      `,
+        { count: "exact" }
+      )
+      .or(`nama.ilike.%${q}%,npsn.ilike.%${q}%`);
+
+    if (error) throw error;
+
+    res.json({
+      total: count,
+      data,
+    });
+  } catch (error) {
+    handleError(res, error);
+  }
+};
