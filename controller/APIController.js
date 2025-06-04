@@ -7,34 +7,92 @@ const handleError = (res, error) => {
 };
 
 // GET ALL SCHOOLS
+// exports.getAll = async (req, res) => {
+//   try {
+//     const {
+//       data: schools,
+//       error,
+//       count,
+//     } = await supabase
+//       .from("sekolah")
+//       .select(
+//         `
+//         *,
+//         alamat(*),
+//         kontak(*),
+//         lokasi(*)
+//       `,
+//         { count: "exact" }
+//         // 👉 ini penting untuk mengaktifkan count
+//       )
+//       .range(0, 2616); // Ambil semua data, sesuaikan dengan jumlah data yang ada
+//     // Jika ada error, lempar ke handleError
+
+//     if (error) throw error;
+
+//     res.json({
+//       total: count,
+//       data: schools,
+//     });
+//   } catch (error) {
+//     handleError(res, error);
+//   }
+// };
 exports.getAll = async (req, res) => {
+  let allSchools = []; // Array untuk menyimpan semua data sekolah
+  let offset = 0;
+  const limit = 1000; // Batas data per permintaan Supabase (default Supabase)
+  let totalCount = 0; // Untuk menyimpan total data dari Supabase
+  let hasMoreData = true; // Flag untuk mengontrol loop
+
   try {
-    const {
-      data: schools,
-      error,
-      count,
-    } = await supabase
-      .from("sekolah")
-      .select(
-        `
-        *,
-        alamat(*),
-        kontak(*),
-        lokasi(*)
-      `,
-        { count: "exact" }
-        // 👉 ini penting untuk mengaktifkan count
-      )
-      .range(0, 2616); // Ambil semua data, sesuaikan dengan jumlah data yang ada
-    // Jika ada error, lempar ke handleError
+    // Loop untuk mengambil data dalam chunk 1000 hingga semua data diambil
+    while (hasMoreData) {
+      const {
+        data: fetchedData,
+        error,
+        count, // 'count' ini adalah total data yang cocok dengan filter (jika ada)
+      } = await supabase
+        .from("sekolah")
+        .select(
+          `
+          *,
+          alamat(*),
+          kontak(*),
+          lokasi(*)
+          `,
+          { count: "exact" } // Tetap hitung total data yang cocok di setiap iterasi
+        )
+        .range(offset, offset + limit - 1); // Ambil data dari offset hingga (offset + limit - 1)
 
-    if (error) throw error;
+      if (error) {
+        throw error; // Jika ada error dari Supabase, hentikan dan lempar error
+      }
 
-    res.json({
-      total: count,
-      data: schools,
+      // Inisialisasi totalCount hanya pada iterasi pertama
+      if (offset === 0) {
+        totalCount = count;
+      }
+
+      // Tambahkan data yang baru diambil ke array allSchools
+      allSchools = allSchools.concat(fetchedData);
+
+      // Periksa apakah masih ada data yang perlu diambil
+      if (fetchedData.length < limit || allSchools.length >= totalCount) {
+        hasMoreData = false; // Jika data yang diambil kurang dari limit, atau sudah mencapai total, hentikan loop
+      } else {
+        offset += limit; // Tingkatkan offset untuk permintaan berikutnya
+      }
+    }
+
+    // Mengirim respons dengan total data yang berhasil diambil dan semua data
+    res.status(200).json({
+      total: totalCount, // Total data keseluruhan yang ada di database
+      data: allSchools, // Semua data yang berhasil digabungkan
+      message: `Berhasil mengambil semua ${totalCount} data sekolah.`,
     });
   } catch (error) {
+    // Menangkap error dan menanganinya
     handleError(res, error);
   }
 };
