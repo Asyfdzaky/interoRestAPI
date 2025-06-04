@@ -13,15 +13,20 @@ exports.getAll = async (req, res) => {
       data: schools,
       error,
       count,
-    } = await supabase.from("sekolah").select(
-      `
+    } = await supabase
+      .from("sekolah")
+      .select(
+        `
         *,
         alamat(*),
         kontak(*),
         lokasi(*)
       `,
-      { count: "exact" } // 👉 ini penting untuk mengaktifkan count
-    );
+        { count: "exact" }
+        // 👉 ini penting untuk mengaktifkan count
+      )
+      .range(0, 2616); // Ambil semua data, sesuaikan dengan jumlah data yang ada
+    // Jika ada error, lempar ke handleError
 
     if (error) throw error;
 
