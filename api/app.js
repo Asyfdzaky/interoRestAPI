@@ -126,6 +126,7 @@ app.use(express.json());
 app.use("/api/sekolah", Routes);
 app.use("/api/auth", Routes);
 
+
 // const PORT = process.env.PORT || 3000;
 // app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 module.exports = app;

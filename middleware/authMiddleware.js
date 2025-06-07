@@ -1,24 +1,26 @@
 const jwt = require("jsonwebtoken");
 
-exports.authenticateAdmin = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Token tidak ditemukan" });
-  }
+  if (!token) return res.status(401).json({ message: "Token tidak ditemukan" });
 
-  const token = authHeader.split(" ")[1];
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: "Token tidak valid" });
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    if (decoded.role !== "admin") {
-      return res.status(403).json({ error: "Akses ditolak" });
-    }
-
-    req.admin = decoded;
+    req.user = user; // { email: '...', role: 'admin', ... }
     next();
-  } catch (error) {
-    return res.status(401).json({ error: "Token tidak valid" });
-  }
+  });
 };
+
+const authorizeAdmin = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res
+      .status(403)
+      .json({ message: "Akses ditolak: hanya admin yang diizinkan" });
+  }
+  next();
+};
+
+module.exports = { authenticateToken, authorizeAdmin };
