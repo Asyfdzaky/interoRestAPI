@@ -3,7 +3,7 @@ const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 const app = express();
-const sekolahRoutes = require("../routes/Routes");
+const Routes = require("../routes/Routes");
 const path = require("path");
 
 // const swaggerDocument = YAML.load(path.join(__dirname, "../swagger.yaml"));
@@ -123,10 +123,8 @@ app.use(
 );
 
 app.use(express.json());
-app.use("/api/sekolah", sekolahRoutes);
-
-const authRoutes = require("./routes/authRoutes");
-app.use("/api/auth", authRoutes);
+app.use("/api/sekolah", Routes);
+app.use("/api/auth", Routes);
 
 // const PORT = process.env.PORT || 3000;
 // app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
