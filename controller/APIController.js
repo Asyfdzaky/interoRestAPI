@@ -327,11 +327,7 @@ exports.searchByNamaOrNPSN = async (req, res) => {
   }
 
   try {
-    const {
-      data = q,
-      error,
-      count,
-    } = await supabase
+    const { data, error, count } = await supabase
       .from("sekolah")
       .select(
         `
@@ -348,7 +344,7 @@ exports.searchByNamaOrNPSN = async (req, res) => {
 
     res.json({
       total: count,
-      data: q,
+      data,
     });
   } catch (error) {
     handleError(res, error);
